@@ -3,6 +3,7 @@
 
 USB dongle allows users to communicate with Efento sensors over Bluetooth. All sensors Bluetooth features are available using the dongle.  
 
+-   Avaiable commands are listed in "2020-06-30 Efento dongle Documentation.pdf"
 -   All the commands start with “sensor” (e.g. “sensor scan 28:2C:02:4F:FF:90")
 -   If you want to repeat the recent commands, press the arrow up key on the keyboard until you find the command you want to repeat
 -   If you want to use another command with the same sensor, can use “-” dongle will put in its place the recently used sensor’s MAC address and PIN (e.g. “sensor scan - -“)
