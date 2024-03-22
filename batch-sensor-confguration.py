@@ -5,7 +5,7 @@ import yaml
 from dongleconnector import DongleConnection
 
 sensor_list = [
-    #    SERIAL NUMBER     PIN
+    #SERIAL NUMBER     PIN
     "28:2C:02:40:FF:FF 1111",
     "28:2C:02:40:FF:FF 1111",
     "28:2C:02:40:FF:FF 1111"
