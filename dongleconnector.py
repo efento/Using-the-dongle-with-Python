@@ -17,7 +17,7 @@ class DongleConnection:
         self.retries_seq = 3
         try:
             self.connection = serial.Serial(self.port,
-                                            9600,
+                                            115200,
                                             parity=serial.PARITY_NONE,
                                             stopbits=serial.STOPBITS_ONE,
                                             rtscts=False,
@@ -29,13 +29,14 @@ class DongleConnection:
 
     def get_response(self):
         s1 = ""
-        regexp = re.compile("usb_cli..")
+        regexp = re.compile("efento-dongle*")
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         cmd_send = False
         response_started = False
         while not regexp.search(s1):
             if self.connection.inWaiting() > 0:
                 line = self.connection.read()
+
                 if response_started or (line != b'\r' and line != b'\n'):
                     s1 += str(line, 'utf-8', 'ignore')
 
@@ -48,10 +49,9 @@ class DongleConnection:
                         response_started = True
                         s1 = str(line, 'utf-8', 'ignore')
 
-            sleep(0.01)
-        s1 = s1[:-9]
+            sleep(0.001)
+        s1 = s1[:s1.rfind('\n')]
         s1 = ansi_escape.sub('', s1)
-        print(s1)
         response = yaml.safe_load(s1)
         escape = re.compile(r'\r\n')
         s1 = escape.sub("\r", s1)
@@ -77,13 +77,15 @@ class DongleConnection:
             if response['result'] == "Response timeout":
                 retry_counter_timeout -= 1
                 logging.debug("Remaining timeout retries: " + str(retry_counter_timeout) + "\n")
+                time.sleep(2)
             elif response['result'] == "Command sequence error":
                 retry_counter_seq -= 1
                 logging.debug("Remaining sequence error retries: " + str(retry_counter_seq) + "\n")
+                time.sleep(2)
             else:
                 retry_counter_seq = 0
                 retry_counter_timeout = 0
-            time.sleep(5)
+
         return result, response
 
     def execute_command(self, command):
